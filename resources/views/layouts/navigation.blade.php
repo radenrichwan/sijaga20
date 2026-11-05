@@ -57,16 +57,19 @@
             @if (file_exists(public_path('images/logo-smk20.png')))
                 <img class="brand-logo me-2" src="{{ asset('images/logo-smk20.png') }}" alt="Logo SMKN 20 Jakarta" width="32" height="32">
             @endif
-            SIJAGA <span class="fw-normal opacity-75">20</span>
+            SIJAGA 20
         </a>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 sijaga-nav-actions">
             <a class="btn btn-sm btn-outline-light position-relative" href="{{ route('notifications.index') }}" aria-label="Notifikasi">
                 <i class="bi bi-bell me-1" aria-hidden="true"></i>Notifikasi
                 @if ($unreadNotificationCount)
                     <span class="badge rounded-pill bg-danger ms-1">{{ $unreadNotificationCount }}</span>
                 @endif
             </a>
-            <span class="d-none d-md-inline text-white small fw-bold">{{ $currentUser->name }} <span class="fw-normal text-white-50">· {{ ucfirst($dashboardRole) }}</span></span>
+            <span class="sijaga-nav-user d-flex flex-column text-white small lh-sm">
+                <span class="fw-bold sijaga-nav-user-name">{{ $currentUser->name }}</span>
+                <span class="text-white-50">{{ ucfirst($dashboardRole) }}</span>
+            </span>
             <button class="btn btn-sm btn-light" type="button" data-bs-toggle="modal" data-bs-target="#logoutConfirmationModal">
                 <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>Keluar
             </button>

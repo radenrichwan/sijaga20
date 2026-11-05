@@ -31,6 +31,16 @@ body.sijaga-body {
     object-fit: contain;
 }
 
+.sijaga-nav-user {
+    max-width: 12rem;
+}
+
+.sijaga-nav-user-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .sijaga-sidebar {
     position: fixed;
     z-index: 1020;
@@ -149,6 +159,17 @@ body.sijaga-body {
 @media (max-width: 575.98px) {
     .sijaga-topbar .navbar-brand {
         font-size: .95rem;
+    }
+
+    .sijaga-nav-actions {
+        flex: 0 0 100%;
+        justify-content: space-between;
+    }
+
+    .sijaga-nav-user {
+        max-width: 45vw;
+        margin-right: auto;
+        order: -1;
     }
 
     .sijaga-login-body {
