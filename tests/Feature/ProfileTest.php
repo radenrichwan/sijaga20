@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Models\DutySchedule;
+use App\Models\Student;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -96,5 +100,45 @@ class ProfileTest extends TestCase
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->fresh());
+    }
+
+    public function test_main_student_teacher_and_operational_accounts_can_open_profile_and_change_password(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+
+        foreach (['12345', 'guru0001', 'piket001'] as $username) {
+            if (auth()->check()) {
+                $this->post(route('logout'))->assertRedirect('/');
+            }
+
+            $this->post(route('login'), [
+                'username' => $username,
+                'password' => $username,
+            ])->assertRedirect(route('dashboard'));
+
+            $user = User::query()->where('username', $username)->firstOrFail();
+
+            $this->get(route('profile.edit'))
+                ->assertOk()
+                ->assertSee(route('password.update'));
+
+            $this->put(route('password.update'), [
+                'current_password' => $username,
+                'password' => 'password-baru-123',
+                'password_confirmation' => 'password-baru-123',
+            ])->assertRedirect(route('profile.edit'));
+
+            $this->assertTrue(Hash::check('password-baru-123', $user->fresh()->password));
+        }
+
+        foreach (DutySchedule::query()->with('members')->get() as $schedule) {
+            $studentIds = $schedule->members->map(fn ($member): ?int => $member->pivot->student_id);
+            $this->assertCount($schedule->members->count(), $studentIds->filter());
+            $this->assertCount($schedule->members->count(), $studentIds->unique());
+            $this->assertSame(
+                $schedule->members->count(),
+                Student::query()->whereIn('id', $studentIds)->where('is_active', true)->count(),
+            );
+        }
     }
 }

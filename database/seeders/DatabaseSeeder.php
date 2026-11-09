@@ -183,6 +183,7 @@ class DatabaseSeeder extends Seeder
                 ])->save();
             }
 
+            $operationalStudentAssignments = collect($students)->shuffle()->take($operationalUsers->count())->values();
             $weekStart = today()->startOfWeek();
             foreach (range(0, 4) as $dayOffset) {
                 $dutyDate = $weekStart->copy()->addDays($dayOffset);
@@ -201,7 +202,7 @@ class DatabaseSeeder extends Seeder
                 foreach (range(0, 3) as $memberOffset) {
                     $memberIndex = ($dayOffset + $memberOffset) % $operationalUsers->count();
                     $members[$operationalUsers[$memberIndex]->id] = [
-                        'student_id' => $students[$memberIndex]->id,
+                        'student_id' => $operationalStudentAssignments[$memberIndex]->id,
                     ];
                 }
 

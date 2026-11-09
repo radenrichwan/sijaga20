@@ -24,6 +24,7 @@ class DutyScheduleAndReplacementTest extends TestCase
     {
         $manager = $this->createUser('guru', 'guru0001');
         $members = $this->createOperationalUsers();
+        $members->take(4)->each(fn (User $member): Student => $this->createStudent($member));
         $monday = Carbon::parse('2026-11-09', 'Asia/Jakarta');
 
         $response = $this->actingAs($manager)->post(route('duty-schedules.preview'), [
@@ -62,6 +63,57 @@ class DutyScheduleAndReplacementTest extends TestCase
         $this->assertSame(5, DutySchedule::query()->count());
         $this->assertSame(20, DB::table('duty_schedule_members')->count());
         $this->assertSame(6, $members->count());
+
+        foreach (DutySchedule::query()->with('members')->get() as $dutySchedule) {
+            $linkedStudentIds = $dutySchedule->members->map(fn (User $member): ?int => $member->pivot->student_id);
+            $this->assertCount(4, $linkedStudentIds->filter());
+            $this->assertCount(4, $linkedStudentIds->unique());
+            $this->assertSame(
+                4,
+                Student::query()->whereIn('id', $linkedStudentIds)->where('is_active', true)->count(),
+            );
+        }
+
+        $linksBeforeRepeat = DB::table('duty_schedule_members')
+            ->orderBy('duty_schedule_id')
+            ->orderBy('user_id')
+            ->get(['duty_schedule_id', 'user_id', 'student_id'])
+            ->map(fn (object $link): array => (array) $link)
+            ->all();
+        $this->post(route('duty-schedules.confirm'), [
+            'period' => 'week',
+            'start_date' => $monday->toDateString(),
+            'schedule' => $preview,
+        ])->assertRedirect();
+        $this->assertSame(5, DutySchedule::query()->count());
+        $this->assertSame(
+            $linksBeforeRepeat,
+            DB::table('duty_schedule_members')
+                ->orderBy('duty_schedule_id')
+                ->orderBy('user_id')
+                ->get(['duty_schedule_id', 'user_id', 'student_id'])
+                ->map(fn (object $link): array => (array) $link)
+                ->all(),
+        );
+    }
+
+    public function test_schedule_index_fills_missing_student_links_for_existing_members(): void
+    {
+        $manager = $this->createUser('guru', 'guru0007', true);
+        $members = $this->createOperationalUsers()->take(4);
+        $members->each(fn (User $member): Student => $this->createStudent($member));
+        $schedule = $this->createSchedule($members);
+
+        $this->actingAs($manager)->get(route('duty-schedules.index', [
+            'period' => 'week',
+            'start_date' => $schedule->duty_date->toDateString(),
+        ]))->assertOk();
+
+        $linkedStudentIds = DB::table('duty_schedule_members')
+            ->where('duty_schedule_id', $schedule->id)
+            ->pluck('student_id');
+        $this->assertCount(4, $linkedStudentIds->filter());
+        $this->assertCount(4, $linkedStudentIds->unique());
     }
 
     public function test_schedule_confirmation_rejects_weekends_and_unbalanced_rosters(): void
@@ -91,6 +143,25 @@ class DutyScheduleAndReplacementTest extends TestCase
             'start_date' => $monday->toDateString(),
             'schedule' => $schedule,
         ])->assertSessionHasErrors('schedule');
+        $this->assertDatabaseCount('duty_schedules', 0);
+    }
+
+    public function test_schedule_confirmation_requires_enough_active_students_for_member_links(): void
+    {
+        $manager = $this->createUser('guru', 'guru0005');
+        $this->createOperationalUsers();
+        $monday = Carbon::parse('2026-11-09', 'Asia/Jakarta');
+        $preview = app(DutyScheduleService::class)->generate($monday, $monday->copy()->addDays(4));
+
+        $this->actingAs($manager)
+            ->from(route('duty-schedules.index'))
+            ->post(route('duty-schedules.confirm'), [
+                'period' => 'week',
+                'start_date' => $monday->toDateString(),
+                'schedule' => $preview,
+            ])
+            ->assertSessionHasErrors('schedule');
+
         $this->assertDatabaseCount('duty_schedules', 0);
     }
 

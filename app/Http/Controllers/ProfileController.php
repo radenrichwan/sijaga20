@@ -16,15 +16,8 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View|RedirectResponse
+    public function edit(Request $request): View
     {
-        if ($request->user()->isSiswa()) {
-            $student = $request->user()->student;
-            abort_unless($student !== null, 404);
-
-            return to_route('students.show', $student);
-        }
-
         return view('profile.edit', [
             'user' => $request->user(),
         ]);

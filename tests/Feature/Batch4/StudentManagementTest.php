@@ -145,7 +145,7 @@ class StudentManagementTest extends TestCase
         $this->assertSame('Siswa Excel', $rows[1]['values'][2]);
     }
 
-    public function test_student_is_read_only_and_can_only_view_their_own_profile(): void
+    public function test_student_cannot_manage_student_records_but_can_edit_their_own_profile(): void
     {
         $studentRoleId = Role::query()->where('name', 'siswa')->valueOrFail('id');
         $studentUser = User::factory()->create([
@@ -165,8 +165,21 @@ class StudentManagementTest extends TestCase
         $this->post(route('students.store'), $this->studentData())->assertForbidden();
         $this->put(route('students.update', $ownStudent), $this->studentData())->assertForbidden();
         $this->patch(route('students.status', $ownStudent), ['is_active' => '0'])->assertForbidden();
-        $this->patch(route('profile.update'), ['name' => 'Diubah', 'username' => $studentUser->username])->assertForbidden();
-        $this->get(route('profile.edit'))->assertRedirect(route('students.show', $ownStudent));
+        $this->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee(route('password.update'));
+        $this->patch(route('profile.update'), ['name' => 'Diubah', 'username' => $studentUser->username])
+            ->assertRedirect(route('profile.edit'));
+        $this->put(route('password.update'), [
+            'current_password' => 'password',
+            'password' => 'password-baru-123',
+            'password_confirmation' => 'password-baru-123',
+        ])->assertRedirect(route('profile.edit'));
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check(
+            'password-baru-123',
+            $studentUser->fresh()->password,
+        ));
+        $this->delete(route('profile.destroy'), ['password' => 'password'])->assertForbidden();
     }
 
     public function test_student_list_is_paginated(): void

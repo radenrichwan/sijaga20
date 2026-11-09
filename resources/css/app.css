@@ -7,9 +7,10 @@
 @tailwind utilities;
 
 :root {
-    --sijaga-navy: #102a43;
+    --sijaga-navy: #0d233a;
     --sijaga-blue: #1d4ed8;
     --sijaga-sidebar-width: 16.25rem;
+    --sijaga-sidebar-collapsed-width: 4.5rem;
 }
 
 body.sijaga-body {
@@ -23,6 +24,20 @@ body.sijaga-body {
     min-height: 4.25rem;
     background: var(--sijaga-navy);
     box-shadow: 0 2px 10px rgb(16 42 67 / 12%);
+}
+
+.sijaga-menu-button {
+    border: 1px solid #91a4b7;
+    background: #0d233a;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.sijaga-menu-button:hover,
+.sijaga-menu-button:focus-visible {
+    border-color: #d7e2ed;
+    background: #173653;
+    color: #fff;
 }
 
 .brand-logo {
@@ -51,6 +66,7 @@ body.sijaga-body {
     overflow-y: auto;
     border-right: 1px solid #e2e8f0;
     background: #fff;
+    transition: all 0.3s ease;
 }
 
 .sijaga-mobile-sidebar {
@@ -93,9 +109,102 @@ body.sijaga-body {
 
 .sijaga-stat-card {
     height: 100%;
-    border: 0;
-    border-radius: .9rem;
-    box-shadow: 0 5px 18px rgb(16 42 67 / 6%);
+    border: 1px solid transparent;
+    border-left-width: 4px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sijaga-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(16, 42, 67, 0.1);
+}
+
+.sijaga-stat-card--blue {
+    border-color: #bfdbfe;
+    border-left-color: #2563eb;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+.sijaga-stat-card--green {
+    border-color: #bbf7d0;
+    border-left-color: #16a34a;
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+}
+
+.sijaga-stat-card--orange {
+    border-color: #fed7aa;
+    border-left-color: #ea580c;
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+}
+
+.sijaga-stat-card--purple {
+    border-color: #ddd6fe;
+    border-left-color: #7c3aed;
+    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+}
+
+.sijaga-stat-card--teal {
+    border-color: #99f6e4;
+    border-left-color: #0f766e;
+    background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+}
+
+.sijaga-stat-card--indigo {
+    border-color: #c7d2fe;
+    border-left-color: #4f46e5;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+}
+
+.sijaga-stat-icon {
+    display: inline-grid;
+    width: 3rem;
+    height: 3rem;
+    flex: 0 0 3rem;
+    place-items: center;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 75%);
+    box-shadow: 0 2px 6px rgb(16 42 67 / 8%);
+    font-size: 1.35rem;
+}
+
+.sijaga-stat-card--blue .sijaga-stat-icon,
+.sijaga-stat-card--blue .sijaga-stat-card-value {
+    color: #1d4ed8;
+}
+
+.sijaga-stat-card--green .sijaga-stat-icon,
+.sijaga-stat-card--green .sijaga-stat-card-value {
+    color: #15803d;
+}
+
+.sijaga-stat-card--orange .sijaga-stat-icon,
+.sijaga-stat-card--orange .sijaga-stat-card-value {
+    color: #c2410c;
+}
+
+.sijaga-stat-card--purple .sijaga-stat-icon,
+.sijaga-stat-card--purple .sijaga-stat-card-value {
+    color: #6d28d9;
+}
+
+.sijaga-stat-card--teal .sijaga-stat-icon,
+.sijaga-stat-card--teal .sijaga-stat-card-value {
+    color: #0f766e;
+}
+
+.sijaga-stat-card--indigo .sijaga-stat-icon,
+.sijaga-stat-card--indigo .sijaga-stat-card-value {
+    color: #4338ca;
+}
+
+.sijaga-stat-card-value {
+    font-variant-numeric: tabular-nums;
+}
+
+.sijaga-stat-card .small {
+    color: #334155 !important;
 }
 
 .sijaga-chart-wrap {
@@ -148,11 +257,92 @@ body.sijaga-body {
 @media (min-width: 992px) {
     .sijaga-page {
         margin-left: var(--sijaga-sidebar-width);
+        transition: all 0.3s ease;
     }
 
     .sijaga-main {
         padding-right: 1.75rem !important;
         padding-left: 1.75rem !important;
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar {
+        width: var(--sijaga-sidebar-collapsed-width);
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar-heading {
+        justify-content: center !important;
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar-title,
+    html.sidebar-collapsed .sijaga-sidebar-toggle-label,
+    html.sidebar-collapsed .sidebar-text,
+    html.sidebar-collapsed .sijaga-sidebar .sijaga-nav-link .ms-auto {
+        display: none !important;
+        opacity: 0 !important;
+    }
+
+    html.sidebar-collapsed .sijaga-topbar .sidebar-text {
+        display: initial !important;
+        opacity: 1 !important;
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar .sijaga-nav-link,
+    html.sidebar-collapsed .sijaga-sidebar .sijaga-profile-link {
+        position: relative;
+        justify-content: center;
+        padding-right: .25rem;
+        padding-left: .25rem;
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar .sijaga-nav-link .bi,
+    html.sidebar-collapsed .sijaga-sidebar .sijaga-profile-link .bi {
+        margin-right: 0 !important;
+        font-size: 1.1rem;
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar .sijaga-nav-link .sijaga-nav-icon {
+        width: auto;
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar [data-sidebar-tooltip]:hover::after,
+    html.sidebar-collapsed .sijaga-sidebar [data-sidebar-tooltip]:focus-visible::after {
+        position: fixed;
+        z-index: 1090;
+        top: var(--sidebar-tooltip-top, 50%);
+        left: calc(var(--sijaga-sidebar-collapsed-width) + .75rem);
+        padding: .45rem .7rem;
+        transform: translateY(-50%);
+        border-radius: .375rem;
+        background: var(--sijaga-navy);
+        box-shadow: 0 3px 10px rgb(16 42 67 / 20%);
+        color: #fff;
+        content: attr(data-sidebar-tooltip);
+        font-size: .8125rem;
+        font-weight: 500;
+        line-height: 1.25;
+        white-space: nowrap;
+        pointer-events: none;
+        transition-delay: 0s !important;
+        animation-delay: 0s !important;
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar .sijaga-profile-link {
+        display: flex;
+        width: 2.75rem;
+        height: 2.75rem;
+        margin: 0 auto;
+        align-items: center;
+        justify-content: center;
+    }
+
+    html.sidebar-collapsed .sijaga-page {
+        margin-left: var(--sijaga-sidebar-collapsed-width);
+    }
+
+    html.sidebar-collapsed .sijaga-sidebar [data-sidebar-tooltip]:hover,
+    html.sidebar-collapsed .sijaga-sidebar [data-sidebar-tooltip]:focus-visible {
+        transition-delay: 0s !important;
+        animation-delay: 0s !important;
     }
 }
 

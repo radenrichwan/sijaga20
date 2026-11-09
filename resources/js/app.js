@@ -13,6 +13,15 @@ select2(window, $);
 
 Alpine.start();
 
+const sidebarStateKey = 'sidebarState';
+const sidebarToggle = document.querySelector('[data-sidebar-collapse-toggle]');
+
+if (window.localStorage.getItem(sidebarStateKey) === 'collapsed') {
+    document.documentElement.classList.add('sidebar-collapsed');
+    sidebarToggle?.setAttribute('aria-pressed', 'true');
+    sidebarToggle?.setAttribute('aria-label', 'Lebarkan menu utama');
+}
+
 $('select.select2-student').each(function () {
     $(this).select2({
         placeholder: 'Cari nama atau NIS siswa',
@@ -22,6 +31,25 @@ $('select.select2-student').each(function () {
 
 document.querySelectorAll('[data-sijaga-toast]').forEach((element) => {
     new Toast(element, { delay: 4500 }).show();
+});
+
+document.querySelectorAll('[data-sidebar-collapse-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+        const collapsed = document.documentElement.classList.toggle('sidebar-collapsed');
+        window.localStorage.setItem(sidebarStateKey, collapsed ? 'collapsed' : 'expanded');
+        button.setAttribute('aria-pressed', String(collapsed));
+        button.setAttribute('aria-label', collapsed ? 'Lebarkan menu utama' : 'Ciutkan menu utama');
+    });
+});
+
+document.querySelectorAll('.sijaga-sidebar [data-sidebar-tooltip]').forEach((item) => {
+    const updateTooltipPosition = () => {
+        const { top, height } = item.getBoundingClientRect();
+        item.style.setProperty('--sidebar-tooltip-top', `${top + height / 2}px`);
+    };
+
+    item.addEventListener('pointerenter', updateTooltipPosition);
+    item.addEventListener('focus', updateTooltipPosition);
 });
 
 document.querySelectorAll('canvas[data-chart]').forEach((canvas) => {

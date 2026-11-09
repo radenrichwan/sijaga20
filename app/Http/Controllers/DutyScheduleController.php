@@ -17,7 +17,7 @@ use Illuminate\View\View;
 
 class DutyScheduleController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, DutyScheduleService $service): View
     {
         $filters = $request->validate([
             'period' => ['nullable', 'in:week,month'],
@@ -29,23 +29,28 @@ class DutyScheduleController extends Controller
             : now('Asia/Jakarta');
         [$start, $end] = $this->periodBounds($period, $startDate);
 
+        $schedules = DutySchedule::query()
+            ->whereBetween('duty_date', [$start->toDateString(), $end->toDateString()])
+            ->orderBy('duty_date')
+            ->get();
+        $replacementSchedules = DutySchedule::query()
+            ->where('duty_date', '>=', today('Asia/Jakarta')->toDateString())
+            ->where('status', 'scheduled')
+            ->orderBy('duty_date')
+            ->limit(30)
+            ->get();
+
+        $service->ensureMemberStudentLinks($schedules->merge($replacementSchedules));
+        $schedules->load(['members.role', 'replacements.originalUser', 'replacements.replacementUser']);
+        $replacementSchedules->load('members');
+
         return view('duty-schedules.index', [
             'period' => $period,
             'startDate' => $start,
             'endDate' => $end,
-            'schedules' => DutySchedule::query()
-                ->with(['members.role', 'replacements.originalUser', 'replacements.replacementUser'])
-                ->whereBetween('duty_date', [$start->toDateString(), $end->toDateString()])
-                ->orderBy('duty_date')
-                ->get(),
+            'schedules' => $schedules,
             'operationalUsers' => $this->activeOperationalUsers(),
-            'replacementSchedules' => DutySchedule::query()
-                ->with('members')
-                ->where('duty_date', '>=', today('Asia/Jakarta')->toDateString())
-                ->where('status', 'scheduled')
-                ->orderBy('duty_date')
-                ->limit(30)
-                ->get(),
+            'replacementSchedules' => $replacementSchedules,
             'isScheduleManager' => $request->user()->canManageSchedule(),
         ]);
     }

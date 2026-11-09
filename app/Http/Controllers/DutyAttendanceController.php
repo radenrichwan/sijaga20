@@ -10,6 +10,7 @@ use App\Models\DutySchedule;
 use App\Models\Student;
 use App\Models\User;
 use App\Services\DutyAttendanceService;
+use App\Services\DutyScheduleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -18,7 +19,7 @@ use Illuminate\View\View;
 
 class DutyAttendanceController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, DutyScheduleService $scheduleService): View
     {
         $filters = $request->validate([
             'period' => ['nullable', 'in:day,month,year'],
@@ -37,8 +38,19 @@ class DutyAttendanceController extends Controller
         $schedule = DutySchedule::query()
             ->whereDate('duty_date', today('Asia/Jakarta')->toDateString())
             ->where('status', 'scheduled')
-            ->with(['members', 'attendances.member', 'attendances.student.user', 'replacements.originalUser', 'replacements.replacementUser', 'replacements.replacementStudent.user'])
             ->first();
+
+        if ($schedule !== null) {
+            $scheduleService->ensureMemberStudentLinks(collect([$schedule]));
+            $schedule->load([
+                'members',
+                'attendances.member',
+                'attendances.student.user',
+                'replacements.originalUser',
+                'replacements.replacementUser',
+                'replacements.replacementStudent.user',
+            ]);
+        }
 
         return view('duty-attendances.index', [
             'filters' => ['period' => $period, 'date' => $date->toDateString()],

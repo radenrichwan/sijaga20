@@ -53,6 +53,36 @@ class DutyAttendanceTest extends TestCase
         $this->assertSame(1, PointTransaction::query()->count());
     }
 
+    public function test_attendance_index_fills_missing_student_links_before_listing_eligible_members(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-11-02 05:45:00', 'Asia/Jakarta'));
+        [$recorder, $member] = [$this->operationalUser('piket001'), $this->operationalUser('piket002')];
+        $otherMembers = collect([
+            $this->operationalUser('piket003'),
+            $this->operationalUser('piket004'),
+            $this->operationalUser('piket005'),
+        ]);
+        $allMembers = collect([$member])->merge($otherMembers);
+        $allMembers->each(fn (User $user): Student => $this->student((string) (91000 + $user->id)));
+        $schedule = DutySchedule::query()->create([
+            'week_start' => '2026-11-02',
+            'duty_date' => '2026-11-02',
+            'status' => 'scheduled',
+            'created_by' => $recorder->id,
+        ]);
+        $schedule->members()->attach($allMembers->pluck('id')->all());
+
+        $this->actingAs($recorder)->get(route('duty-attendances.index'))
+            ->assertOk()
+            ->assertSee($member->name);
+
+        $linkedStudentIds = $schedule->members()->get()->map(
+            fn (User $user): ?int => $user->pivot->student_id,
+        );
+        $this->assertCount(4, $linkedStudentIds);
+        $this->assertCount(4, $linkedStudentIds->unique());
+    }
+
     public function test_only_scheduled_members_and_approved_replacements_can_receive_attendance_points(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-11-02 05:30:00', 'Asia/Jakarta'));

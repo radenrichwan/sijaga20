@@ -13,22 +13,22 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold" for="username">Username</label>
+                    <label class="form-label fw-semibold" for="username">Nama pengguna</label>
                     <div class="input-group input-group-lg">
                         <span class="input-group-text sijaga-login-input-icon"><i class="bi bi-person" aria-hidden="true"></i></span>
                         <input id="username" class="form-control form-control-lg" type="text" name="username"
-                            value="{{ old('username') }}" required autofocus autocomplete="username" placeholder="Masukkan username">
+                            value="{{ old('username') }}" required autofocus autocomplete="username" placeholder="Masukkan nama pengguna">
                     </div>
                     <x-input-error :messages="$errors->get('username')" class="mt-2" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-semibold" for="password">Password</label>
+                    <label class="form-label fw-semibold" for="password">Kata sandi</label>
                     <div class="input-group input-group-lg">
                         <span class="input-group-text sijaga-login-input-icon"><i class="bi bi-lock" aria-hidden="true"></i></span>
                         <input id="password" class="form-control form-control-lg" type="password" name="password"
-                            required autocomplete="current-password" placeholder="Masukkan password">
-                        <button class="btn btn-outline-secondary" type="button" data-toggle-password aria-label="Tampilkan password"
+                            required autocomplete="current-password" placeholder="Masukkan kata sandi">
+                        <button class="btn btn-outline-secondary" type="button" data-toggle-password aria-label="Tampilkan kata sandi"
                             aria-pressed="false">
                             <i class="bi bi-eye" aria-hidden="true"></i>
                         </button>
@@ -42,7 +42,7 @@
                         <span class="form-check-label">Ingat saya</span>
                     </label>
                     @if (Route::has('password.request'))
-                        <a class="small text-decoration-none" href="{{ route('password.request') }}">Lupa password?</a>
+                        <a class="small text-decoration-none" href="{{ route('password.request') }}">Lupa kata sandi?</a>
                     @endif
                 </div>
 
@@ -71,7 +71,7 @@
 
             password.type = visible ? 'text' : 'password';
             button.setAttribute('aria-pressed', String(visible));
-            button.setAttribute('aria-label', visible ? 'Sembunyikan password' : 'Tampilkan password');
+            button.setAttribute('aria-label', visible ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
             icon.classList.toggle('bi-eye', !visible);
             icon.classList.toggle('bi-eye-slash', visible);
         });

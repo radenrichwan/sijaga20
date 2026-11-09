@@ -51,7 +51,7 @@
 
 <nav class="navbar navbar-dark sijaga-topbar sticky-top">
     <div class="container-fluid">
-        <button class="btn btn-outline-light d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
+        <button class="btn btn-sm sijaga-menu-button d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-label="Buka menu"><i class="bi bi-list me-1" aria-hidden="true"></i>Menu</button>
         <a class="navbar-brand fw-bold me-auto" href="{{ route('dashboard') }}">
             @if (file_exists(public_path('images/logo-smk20.png')))
@@ -67,8 +67,8 @@
                 @endif
             </a>
             <span class="sijaga-nav-user d-flex flex-column text-white small lh-sm">
-                <span class="fw-bold sijaga-nav-user-name">{{ $currentUser->name }}</span>
-                <span class="text-white-50">{{ ucfirst($dashboardRole) }}</span>
+                <span class="fw-bold sijaga-nav-user-name sidebar-text">{{ $currentUser->name }}</span>
+                <span class="text-white-50 sidebar-text">{{ ucfirst($dashboardRole) }}</span>
             </span>
             <button class="btn btn-sm btn-light" type="button" data-bs-toggle="modal" data-bs-target="#logoutConfirmationModal">
                 <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>Keluar
@@ -78,10 +78,19 @@
 </nav>
 
 <aside class="sijaga-sidebar d-none d-lg-flex flex-column">
-    <div class="px-3 pt-4 pb-2 text-uppercase text-secondary small fw-bold">Menu utama</div>
+    <div class="sijaga-sidebar-heading d-flex align-items-center gap-2 px-2 pt-3 pb-2">
+        <button class="btn btn-sm sijaga-menu-button flex-shrink-0" type="button" data-sidebar-collapse-toggle
+            aria-label="Ciutkan atau lebarkan menu utama" aria-pressed="false">
+            <i class="bi bi-list" aria-hidden="true"></i><span class="sijaga-sidebar-toggle-label ms-1">Menu</span>
+        </button>
+        <span class="sijaga-sidebar-title text-uppercase text-secondary small fw-bold">Menu utama</span>
+    </div>
     @include('layouts.partials.role-navigation', ['items' => $items])
     <div class="mt-auto border-top p-3">
-        <a class="btn btn-outline-secondary w-100" href="{{ route('profile.edit') }}"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Pengaturan profil</a>
+        <a class="btn btn-outline-secondary w-100 sijaga-profile-link" href="{{ route('profile.edit') }}"
+            aria-label="Pengaturan profil" data-sidebar-tooltip="Pengaturan profil">
+            <i class="bi bi-person-gear me-2" aria-hidden="true"></i><span class="sidebar-text">Pengaturan profil</span>
+        </a>
     </div>
 </aside>
 

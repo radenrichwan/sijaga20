@@ -67,14 +67,14 @@
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border-top mt-3 pt-3">
                 <p class="small text-secondary mb-0">Impor CSV atau Excel (.xlsx). Kata sandi awal akun baru adalah NIS siswa.</p>
                 @if (auth()->user()->isGuru())
-                    <div class="d-flex flex-wrap gap-2">
-                        <a class="btn btn-outline-secondary text-nowrap" href="{{ route('students.import.template') }}">Unduh Template Import</a>
-                        <form action="{{ route('students.import') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-wrap gap-2">
-                            @csrf
-                            <input class="form-control" type="file" name="file" accept=".csv,.txt,.xlsx" required aria-label="Pilih file data siswa">
-                            <button class="btn btn-primary text-nowrap" type="submit">Import Data Siswa</button>
-                        </form>
-                    </div>
+                    <form action="{{ route('students.import') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-2">
+                        @csrf
+                        <input class="form-control" type="file" name="file" accept=".csv,.txt,.xlsx" required aria-label="Pilih file data siswa">
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+                            <button class="btn btn-primary btn-sm text-nowrap" type="submit">Import Data Siswa</button>
+                            <a class="btn btn-success btn-sm text-nowrap" href="{{ route('students.import.template') }}">Unduh Template Import</a>
+                        </div>
+                    </form>
                 @endif
             </div>
         </div>
@@ -90,7 +90,7 @@
                         <th scope="col">Kelas / Jurusan</th>
                         <th scope="col">Poin</th>
                         <th scope="col">Status</th>
-                        <th scope="col" class="text-end">Aksi</th>
+                        <th scope="col" class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>

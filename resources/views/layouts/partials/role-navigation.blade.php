@@ -6,14 +6,16 @@
             $active = isset($item['route']) && request()->routeIs($item['route'], $item['route'].'.*');
         @endphp
         @if ($disabled)
-            <span class="nav-link sijaga-nav-link disabled" aria-disabled="true" title="Fitur dijadwalkan pada tahap berikutnya">
+            <span class="nav-link sijaga-nav-link disabled" aria-disabled="true"
+                aria-label="{{ $item['label'] }}" data-sidebar-tooltip="{{ $item['label'] }}">
                 <i class="bi bi-{{ $item['icon'] ?? 'circle' }} sijaga-nav-icon me-2" aria-hidden="true"></i>
-                {{ $item['label'] }} <span class="ms-auto small text-secondary">Segera</span>
+                <span class="sidebar-text">{{ $item['label'] }}</span> <span class="ms-auto small text-secondary sidebar-text">Segera</span>
             </span>
         @else
             <a class="nav-link sijaga-nav-link {{ $active ? 'active' : '' }}" href="{{ $href }}"
+                aria-label="{{ $item['label'] }}" data-sidebar-tooltip="{{ $item['label'] }}"
                 @if (str_contains($href, '#')) data-bs-dismiss="offcanvas" @endif>
-                <i class="bi bi-{{ $item['icon'] ?? 'circle' }} sijaga-nav-icon me-2" aria-hidden="true"></i>{{ $item['label'] }}
+                <i class="bi bi-{{ $item['icon'] ?? 'circle' }} sijaga-nav-icon me-2" aria-hidden="true"></i><span class="sidebar-text">{{ $item['label'] }}</span>
             </a>
         @endif
     @endforeach

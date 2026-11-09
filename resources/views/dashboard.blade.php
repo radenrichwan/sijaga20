@@ -39,20 +39,20 @@
 
         <div class="row g-3 mb-4">
             @foreach ([
-                ['Total siswa aktif', $studentCount, 'primary'],
-                ['Pelanggaran Hari Ini', $violationCount, 'danger'],
-                ['Keterlambatan Hari Ini', $latenessCount, 'warning'],
-                ['Penghargaan Pagi', $morningRewardCount, 'success'],
-                ['Kehadiran Piket Hari Ini', $attendanceCount, 'info'],
-                ['Total saldo poin siswa', number_format($totalPoints), 'primary'],
-            ] as [$label, $value, $color])
+                ['Total siswa aktif', $studentCount, 'blue', 'people-fill'],
+                ['Pelanggaran Hari Ini', $violationCount, 'green', 'exclamation-triangle-fill'],
+                ['Keterlambatan Hari Ini', $latenessCount, 'orange', 'clock-fill'],
+                ['Penghargaan Pagi', $morningRewardCount, 'purple', 'award-fill'],
+                ['Kehadiran Piket Hari Ini', $attendanceCount, 'teal', 'clipboard-check-fill'],
+                ['Total saldo poin siswa', number_format($totalPoints), 'indigo', 'star-fill'],
+            ] as [$label, $value, $color, $icon])
                 <div class="col-6 col-xl-4">
-                    <article class="card sijaga-stat-card">
+                    <article class="card sijaga-stat-card sijaga-stat-card--{{ $color }}">
                         <div class="card-body d-flex align-items-center gap-3 p-3 p-lg-4">
-                            <span class="rounded-circle bg-{{ $color }}-subtle text-{{ $color }} p-3 fw-bold" aria-hidden="true">{{ substr($label, 0, 1) }}</span>
+                            <span class="sijaga-stat-icon" aria-hidden="true"><i class="bi bi-{{ $icon }}"></i></span>
                             <div>
                                 <p class="small text-secondary mb-1">{{ $label }}</p>
-                                <p class="h3 fw-bold mb-0">{{ number_format((int) $value) }}</p>
+                                <p class="h3 fw-bold mb-0 sijaga-stat-card-value">{{ number_format((int) $value) }}</p>
                             </div>
                         </div>
                     </article>
