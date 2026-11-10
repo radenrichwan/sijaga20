@@ -21,8 +21,8 @@ SIJAGA 20 adalah aplikasi web untuk pencatatan kedisiplinan, transaksi poin, pen
 |---|---|
 | Nama proyek | SIJAGA 20 |
 | Instansi | SMKN 20 Jakarta |
-| Pengembang | Tidak dideklarasikan pada `composer.json` atau metadata aplikasi |
-| Status | Final 2.0 (status dokumen proyek) |
+| Pengembang | Raden Richwan — Pengembangan Perangkat Lunak dan Gim (PPLG) |
+| Status | Final 2.0 |
 | Repository | [radenrichwan/sijaga20](https://github.com/radenrichwan/sijaga20) |
 
 ## Alur Sistem (System Flowchart)
