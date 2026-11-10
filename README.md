@@ -62,7 +62,9 @@ Ringkasan alur utama berdasarkan implementasi aplikasi:
 
 ## Stack Teknologi
 
-| Lapisan | Teknologi yang ditemukan |
+## Stack Teknologi
+
+| Lapisan | Teknologi yang digunakan |
 |---|---|
 | Backend | PHP `^8.3`; Laravel `^13.0` (`v13.39.0` terkunci di `composer.lock`) |
 | Template/UI | Laravel Blade, Bootstrap `^5.3.8`, Bootstrap Icons `^1.13.2` |
@@ -70,11 +72,11 @@ Ringkasan alur utama berdasarkan implementasi aplikasi:
 | Interaktivitas | Alpine.js `^3.4.2`, Bootstrap JS, jQuery `^3.7.1`, Select2 `^4.0.13` |
 | Grafik | Chart.js `^4.6.1` |
 | Asset bundler | Vite `^7.0.7`, Laravel Vite Plugin `^2.0.0` |
-| Database | `.env.example` memakai SQLite; konfigurasi Laravel juga menyediakan driver MySQL, MariaDB, PostgreSQL, dan SQL Server |
+| Database | PostgreSQL (`pgsql`, Port 5432) |
 | PDF | `barryvdh/laravel-dompdf` `^3.1` |
 | Pengujian | PHPUnit `^12.5.12`; suite Unit dan Feature |
 
-> **Database:** PostgreSQL tersedia sebagai driver dalam konfigurasi Laravel, tetapi bukan database default pada proyek ini. `.env.example` menggunakan SQLite. Jalankan migrasi dan pengujian integrasi pada DBMS target sebelum menggunakannya di deployment.
+> **Database:** PostgreSQL telah terkonfigurasi sebagai driver utama aplikasi. Namun, file `.env.example` bawaan masih mengacu pada SQLite untuk keperluan pengujian awal. Sebelum melakukan deployment ke lingkungan produksi, pastikan konfigurasi `.env` telah disesuaikan ke PostgreSQL, serta lakukan migrasi skema dan pengujian integrasi (integration test) pada DBMS target.
 
 > **Format ekspor laporan:** tombol laporan yang berlabel Excel/CSV memanggil route `reports.export.excel`, tetapi implementasi mengirim file CSV. Ekspor XLSX sesungguhnya tersedia pada modul data siswa.
 
